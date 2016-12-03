@@ -6,7 +6,7 @@ import scala.util.Random
 
 import messages.{BodyScanStatus, BodyScanStatusRequest, EnterBodyScan, ScanReport}
 
-class BodyScan(lineNumber: Int, securitySystem: ActorRef) extends Actor {
+class BodyScan(val lineNumber: Int, val securitySystem: ActorRef) extends Actor {
   var isAvailable = true
 
   def receive = {
@@ -20,7 +20,7 @@ class BodyScan(lineNumber: Int, securitySystem: ActorRef) extends Actor {
 
   def randomlyPassesTest: Boolean = {
     // Passes the test 80% of the time
-    val r = new Random()
+    val r = Random
     r.nextDouble() > 0.2
   }
 }

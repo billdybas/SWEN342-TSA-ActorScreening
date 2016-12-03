@@ -1,3 +1,3 @@
 package messages
 
-case class BodyScanStatus(available: Boolean)
+case class BodyScanStatus(val available: Boolean)

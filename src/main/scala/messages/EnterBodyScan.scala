@@ -2,4 +2,4 @@ package messages
 
 import actors.Passenger
 
-case class EnterBodyScan(passenger: Passenger)
+case class EnterBodyScan(val passenger: Passenger)

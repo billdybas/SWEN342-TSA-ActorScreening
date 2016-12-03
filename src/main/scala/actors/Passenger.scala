@@ -1,14 +1,12 @@
 package actors
 
 import akka.actor.Actor
-import akka.actor.Props
-import akka.event.Logging
 
-class Passenger extends Actor {
-  val log = Logging(context.system, this)
+class Baggage(val passenger: Passenger)
+
+class Passenger(val baggage: Baggage) extends Actor {
 
   def receive = {
-    case "test" => log.info("received test")
-    case _      => log.info("received unknown message")
+    case _ => println("Passenger Received Unknown Message")
   }
 }

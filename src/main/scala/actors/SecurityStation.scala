@@ -6,8 +6,8 @@ import scala.collection.mutable.HashMap
 
 import messages.ScanReport
 
-class SecurityStation(lineNumber: Int) extends Actor {
-  val passengerScanReports: HashMap[Passenger, Boolean] = new HashMap[Passenger, Boolean]()
+class SecurityStation(val lineNumber: Int) extends Actor {
+  val passengerScanReports: HashMap[Passenger, Boolean] = HashMap[Passenger, Boolean]()
 
   def receive = {
     case ScanReport(passenger, result) =>
