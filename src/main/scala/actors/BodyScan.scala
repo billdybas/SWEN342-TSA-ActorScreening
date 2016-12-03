@@ -1,14 +1,26 @@
 package actors
 
-import akka.actor.Actor
-import akka.actor.Props
-import akka.event.Logging
+import akka.actor.{Actor, ActorRef}
 
-class BodyScan extends Actor {
-  val log = Logging(context.system, this)
+import scala.util.Random
+
+import messages.{BodyScanStatus, BodyScanStatusRequest, EnterBodyScan, ScanReport}
+
+class BodyScan(lineNumber: Int, securitySystem: ActorRef) extends Actor {
+  var isAvailable = true
 
   def receive = {
-    case "test" => log.info("received test")
-    case _      => log.info("received unknown message")
+    case BodyScanStatusRequest => sender ! BodyScanStatus(isAvailable)
+    case EnterBodyScan(passenger) =>
+      isAvailable = false
+      securitySystem ! ScanReport(passenger, randomlyPassesTest)
+      isAvailable = true
+    case _ => println("Body Scan Received Unknown Message")
+  }
+
+  def randomlyPassesTest: Boolean = {
+    // Passes the test 80% of the time
+    val r = new Random()
+    r.nextDouble() > 0.2
   }
 }

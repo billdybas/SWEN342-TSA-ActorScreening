@@ -10,9 +10,7 @@ class SecurityStation(lineNumber: Int) extends Actor {
   val passengerScanReports: HashMap[Passenger, Boolean] = new HashMap[Passenger, Boolean]()
 
   def receive = {
-
     case ScanReport(passenger, result) =>
-
       if (passengerScanReports.get(passenger) == None) {
         passengerScanReports.put(passenger, result)
       } else {
@@ -22,7 +20,6 @@ class SecurityStation(lineNumber: Int) extends Actor {
           // TODO: Send passenger to jail if their end result is false
           // TODO: Send passenger home if their end result is true
       }
-
     case _ => println("Security System Received Unknown Message")
   }
 }
