@@ -4,7 +4,7 @@ import akka.actor.Actor
 import akka.actor.Props
 import akka.event.Logging
 
-class Queue extends Actor {
+class PassengerQueue extends Actor {
   val log = Logging(context.system, this)
 
   def receive = {
