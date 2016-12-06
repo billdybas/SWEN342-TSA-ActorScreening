@@ -1,7 +1,7 @@
 
 import akka.actor.{ActorSystem, Props}
 import actors._
-import messages.SystemUnit
+import messages.{SystemUnit, Startup, Shutdown}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -33,6 +33,6 @@ object Main {
     // TODO: Send a shutdown message to everyone who needs one and when
     // receive message back saying they're all done, shutdown the entire actor system
 
-    system.shutdown
+    system.terminate()
   }
 }
