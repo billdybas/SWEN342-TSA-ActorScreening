@@ -25,6 +25,6 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
           passenger ! LeaveSystem
         }
       }
-    case _ => println("Security System Received Unknown Message")
+    case _ => println(s"${self.path.name} Received Unknown Message")
   }
 }

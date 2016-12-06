@@ -9,7 +9,7 @@ object Main {
 
     val numSystemUnits: Int = 2 // TODO: Command-line arg?
 
-    val documentCheck = system.actorOf(Props(new DocCheck(numSystemUnits)), name = "DocumentCheck")
+    val documentCheck = system.actorOf(Props(new DocCheck(numSystemUnits)), name = "Document Check")
     val jail = system.actorOf(Props(new Jail(numSystemUnits)), name = "Jail")
 
     for (i <- 1 to 10) {
@@ -17,11 +17,13 @@ object Main {
 
       val securityStation = system.actorOf(Props(new SecurityStation(i, jail)), name = s"Security Station ${i}")
 
-      val bagScan = system.actorOf(Props(new BaggageScan(i, securityStation)), name = s"Bag Scan ${i}")
+      val baggageScan = system.actorOf(Props(new BaggageScan(i, securityStation)), name = s"Baggage Scan ${i}")
       val bodyScan = system.actorOf(Props(new BodyScan(i, securityStation)), name = s"Body Scan ${i}")
 
+      baggageScan ! Startup
+      bodyScan ! Startup
 
-      documentCheck ! SystemUnit(queue, bagScan, bodyScan, securityStation)
+      documentCheck ! SystemUnit(queue, baggageScan, bodyScan, securityStation)
     }
 
     // TODO: Let the document check start accepting passengers
@@ -30,5 +32,7 @@ object Main {
     //
     // TODO: Send a shutdown message to everyone who needs one and when
     // receive message back saying they're all done, shutdown the entire actor system
+
+    system.shutdown
   }
 }

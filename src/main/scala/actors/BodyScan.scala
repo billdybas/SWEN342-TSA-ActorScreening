@@ -10,14 +10,14 @@ class BodyScan(val lineNumber: Int, val securitySystem: ActorRef) extends Actor 
   var isAvailable = true
 
   def receive = {
-    case Startup => println(s"Body Scan $lineNumber starts up.")
-    case Shutdown => println(s"Body Scan $lineNumber shuts down.")
+    case Startup => println(s"${self.path.name} starts up.")
+    case Shutdown => println(s"${self.path.name} shuts down.")
     case BodyScanStatusRequest => sender ! BodyScanStatus(isAvailable)
     case EnterBodyScan(passenger) =>
       isAvailable = false
       securitySystem ! ScanReport(passenger, randomlyPassesTest)
       isAvailable = true
-    case _ => println("Body Scan Received Unknown Message")
+    case _ => println(s"${self.path.name} Received Unknown Message")
   }
 
   def randomlyPassesTest: Boolean = {
