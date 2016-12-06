@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorRef}
 
 import scala.collection.mutable.HashMap
 
-import messages.{ScanReport, LeaveSystem}
+import messages.{ScanReport, LeaveSystem, SendPassengerToJail}
 
 class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
   val passengerScanReports: HashMap[Passenger, Boolean] = HashMap[Passenger, Boolean]()
