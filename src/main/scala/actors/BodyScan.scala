@@ -4,18 +4,20 @@ import akka.actor.{Actor, ActorRef}
 
 import scala.util.Random
 
-import messages.{BodyScanStatus, BodyScanStatusRequest, EnterBodyScan, ScanReport, Startup, Shutdown}
+import messages.{BodyScanStatus, BodyScanStatusRequest, EnterBodyScan, ScanReport, Startup, Shutdown, ShutdownSecurityStation}
 
-class BodyScan(val lineNumber: Int, val securitySystem: ActorRef) extends Actor {
+class BodyScan(val lineNumber: Int, val securityStation: ActorRef) extends Actor {
   var isAvailable = true
 
   def receive = {
     case Startup => println(s"${self.path.name} starts up.")
-    case Shutdown => println(s"${self.path.name} shuts down.")
+    case Shutdown =>
+      println(s"${self.path.name} shuts down.")
+      securityStation ! ShutdownSecurityStation
     case BodyScanStatusRequest => sender ! BodyScanStatus(isAvailable)
     case EnterBodyScan(passenger) =>
       isAvailable = false
-      securitySystem ! ScanReport(passenger, randomlyPassesTest)
+      securityStation ! ScanReport(passenger, randomlyPassesTest)
       isAvailable = true
     case _ => println(s"${self.path.name} Received Unknown Message")
   }

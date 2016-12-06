@@ -2,13 +2,16 @@ package actors
 
 import akka.actor.{Actor, ActorRef}
 
-import messages.{ReturnBaggage, LeaveSystem}
+import messages.{ReturnBaggage, LeaveSystem, GoToDetention}
 
-class Baggage(val passenger: ActorRef)
+class Baggage()
 
 class Passenger(val baggage: Baggage) extends Actor {
 
   def receive = {
-    case _ => println("Passenger Received Unknown Message")
+    case ReturnBaggage => println(s"${self.path.name} has their baggage returned.") // TODO: Check if they received the right baggage?
+    case LeaveSystem => println(s"${self.path.name} leaves the system.")
+    case GoToDetention => println(s"${self.path.name} goes to detention.")
+    case _ => println(s"${self.path.name} Received Unknown Message")
   }
 }

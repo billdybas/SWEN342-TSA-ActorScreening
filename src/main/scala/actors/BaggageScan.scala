@@ -7,7 +7,7 @@ import scala.collection.mutable.Queue
 
 import messages.{PlaceBaggage, ReturnBaggage, ScanReport, Startup, Shutdown}
 
-class BaggageScan(val lineNumber: Int, val securitySystem: ActorRef) extends Actor {
+class BaggageScan(val lineNumber: Int, val securityStation: ActorRef) extends Actor {
   val baggageQueue = Queue[Baggage]()
 
   def receive = {
@@ -15,7 +15,7 @@ class BaggageScan(val lineNumber: Int, val securitySystem: ActorRef) extends Act
     case Shutdown => println(s"${self.path.name} shuts down.")
     case PlaceBaggage(passenger, baggage) =>
       baggageQueue :+ baggage
-      securitySystem ! ScanReport(passenger, randomlyPassesTest)
+      securityStation ! ScanReport(passenger, randomlyPassesTest)
       passenger ! ReturnBaggage(baggageQueue.apply(0)) // TODO: Test if this is right
     case _ => println(s"${self.path.name} Received Unknown Message")
   }
