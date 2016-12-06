@@ -5,12 +5,14 @@ import akka.actor.{Actor, ActorRef}
 import scala.util.Random
 import scala.collection.mutable.Queue
 
-import messages.{PlaceBaggage, ReturnBaggage, ScanReport}
+import messages.{PlaceBaggage, ReturnBaggage, ScanReport, Startup, Shutdown}
 
 class BaggageScan(val lineNumber: Int, val securitySystem: ActorRef) extends Actor {
   val baggageQueue = Queue[Baggage]()
 
   def receive = {
+    case Startup => println(s"Baggage Scan $lineNumber starts up.")
+    case Shutdown => println(s"Baggage Scan $lineNumber shuts down.")
     case PlaceBaggage(passenger, baggage) =>
       baggageQueue :+ baggage
       securitySystem ! ScanReport(baggage.passenger, randomlyPassesTest)
