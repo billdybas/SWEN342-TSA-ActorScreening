@@ -1,5 +1,5 @@
 package messages
 
-import actors.Passenger
+import akka.actor.ActorRef
 
-case class SendPassengerToJail(val passenger: Passenger)
+case class SendPassengerToJail(val passenger: ActorRef)

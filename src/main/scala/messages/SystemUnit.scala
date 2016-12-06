@@ -1,5 +1,5 @@
 package messages
 
-import actors.{PassengerQueue, BaggageScan, BodyScan, SecurityStation}
+import akka.actor.ActorRef
 
-case class SystemUnit(queue: PassengerQueue, bagScan: BaggageScan, bodyScan: BodyScan, securityStation: SecurityStation)
+case class SystemUnit(queue: ActorRef, bagScan: ActorRef, bodyScan: ActorRef, securityStation: ActorRef)

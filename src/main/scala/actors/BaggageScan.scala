@@ -15,7 +15,7 @@ class BaggageScan(val lineNumber: Int, val securitySystem: ActorRef) extends Act
     case Shutdown => println(s"Baggage Scan $lineNumber shuts down.")
     case PlaceBaggage(passenger, baggage) =>
       baggageQueue :+ baggage
-      securitySystem ! ScanReport(baggage.passenger, randomlyPassesTest)
+      securitySystem ! ScanReport(passenger, randomlyPassesTest)
       passenger ! ReturnBaggage(baggageQueue.apply(0)) // TODO: Test if this is right
     case _ => println("Baggage Scan Received Unknown Message")
   }

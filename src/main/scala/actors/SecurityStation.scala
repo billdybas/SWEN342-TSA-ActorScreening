@@ -7,7 +7,7 @@ import scala.collection.mutable.HashMap
 import messages.{ScanReport, LeaveSystem, SendPassengerToJail}
 
 class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
-  val passengerScanReports: HashMap[Passenger, Boolean] = HashMap[Passenger, Boolean]()
+  val passengerScanReports: HashMap[ActorRef, Boolean] = HashMap[ActorRef, Boolean]()
 
   def receive = {
     case ScanReport(passenger, result) =>
@@ -17,7 +17,7 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
         passengerScanReports.put(passenger,
           passengerScanReports.get(passenger).get && result)
 
-        if (passengerScanReports.get(passenger) == false) {
+        if (passengerScanReports.get(passenger).get == false) {
           // Passenger failed a scan - send them to Jail
           jail ! SendPassengerToJail(passenger)
         } else {

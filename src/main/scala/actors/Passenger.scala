@@ -1,8 +1,10 @@
 package actors
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorRef}
 
-class Baggage(val passenger: Passenger)
+import messages.{ReturnBaggage, LeaveSystem}
+
+class Baggage(val passenger: ActorRef)
 
 class Passenger(val baggage: Baggage) extends Actor {
 

@@ -1,5 +1,5 @@
 package messages
 
-import actors.Passenger
+import akka.actor.ActorRef
 
-case class EnterBodyScan(val passenger: Passenger)
+case class EnterBodyScan(val passenger: ActorRef)
