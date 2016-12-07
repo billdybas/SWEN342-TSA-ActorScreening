@@ -1,16 +1,16 @@
 
 import akka.actor.{ActorSystem, Props}
 import actors._
-import messages.{SystemUnit, Startup, Shutdown}
+import messages.{Line, Startup, Shutdown}
 
 object Main {
   def main(args: Array[String]): Unit = {
     val system = ActorSystem("TSA-Actor-Screening")
 
-    val numSystemUnits: Int = 2 // TODO: Command-line arg?
+    val numLines: Int = 2 // TODO: Command-line arg?
 
-    val documentCheck = system.actorOf(Props(new DocCheck(numSystemUnits)), name = "Document Check")
-    val jail = system.actorOf(Props(new Jail(numSystemUnits)), name = "Jail")
+    val documentCheck = system.actorOf(Props(new DocCheck(numLines)), name = "Document Check")
+    val jail = system.actorOf(Props(new Jail(numLines)), name = "Jail")
 
     for (i <- 1 to 10) {
       val queue = system.actorOf(Props(new PassengerQueue()), name = s"Passenger ${i}")
@@ -23,7 +23,7 @@ object Main {
       baggageScan ! Startup
       bodyScan ! Startup
 
-      documentCheck ! SystemUnit(i, queue, baggageScan, bodyScan, securityStation)
+      documentCheck ! Line(i, queue, baggageScan, bodyScan, securityStation)
     }
 
     // TODO: Let the document check start accepting passengers
