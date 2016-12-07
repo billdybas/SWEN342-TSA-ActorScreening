@@ -11,7 +11,6 @@ class Jail(val numSecurityStations: Int) extends Actor {
   var numFinishedSecurityStations: Int = 0
 
   def receive = {
-
     case SendPassengerToJail(passenger) =>
       passengerQueue :+ passenger
     case SecurityStationFinished =>
@@ -20,7 +19,6 @@ class Jail(val numSecurityStations: Int) extends Actor {
       if (numFinishedSecurityStations == numSecurityStations) {
         passengerQueue.foreach((p: ActorRef) => p ! GoToDetention)
       }
-
     case _ => println(s"${self.path.name} Received Unknown Message")
   }
 }

@@ -23,7 +23,7 @@ object Main {
       baggageScan ! Startup
       bodyScan ! Startup
 
-      documentCheck ! SystemUnit(queue, baggageScan, bodyScan, securityStation)
+      documentCheck ! SystemUnit(i, queue, baggageScan, bodyScan, securityStation)
     }
 
     // TODO: Let the document check start accepting passengers

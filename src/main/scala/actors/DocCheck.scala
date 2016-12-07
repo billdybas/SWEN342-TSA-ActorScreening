@@ -1,23 +1,30 @@
 package actors
 
 import akka.actor.Actor
-import akka.actor.Props
-import akka.event.Logging
-import akka.routing._
 
-class DocCheck extends Actor {
-  val log = Logging(context.system, this)
+import scala.collection.mutable.HashMap
+import scala.util.Random
+
+import messages.{GetPassenger, LeaveSystem, SendPassengerToQueue, SystemUnit}
+
+class DocCheck(numSystemUnits: Int) extends Actor {
+  val passengerQueues: HashMap[Int, ActorRef] = HashMap[Int, ActorRef]()
+  var currentQueueNum: Int = 0
 
   def receive = {
-    case "test" => log.info("received test")
-    case _      => log.info("received unknown message")
-    case GetPassenger() => 
-    	if(randomlyPassesTest) {
-
-    	} else {
-    		//Tell the passenger to leave the system
-    		passenger ! leaveSystem()
-    	}
+    case SystemUnit(id, queue, baggageScan, bodyScan, securityScan) =>
+      passengerQueues.put(id, queue)
+    case GetPassenger(passenger) =>
+      if (randomlyPassesTest) {
+        // Send the Passenger to a queue
+        passengerQueues.get(currentQueueNum).get ! SendPassengerToQueue(passenger)
+        // Assignment to a queue cycles through the available queues
+        currentQueueNum = (currentQueueNum + 1) % numSystemUnits
+      } else {
+        // Tell the Passenger to leave the system
+        passenger ! LeaveSystem
+      }
+    case _ => println("Document Check Received Unknown Message")
   }
 
   def randomlyPassesTest: Boolean = {
