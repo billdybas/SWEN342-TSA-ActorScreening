@@ -12,6 +12,8 @@ class Passenger(val baggage: Baggage) extends Actor {
     case BaggageScanReady(baggageScan) =>
       baggageScan ! PlaceBaggage(self, baggage)
     // TODO: Case for entering and leaving the Body Scan
+    case EnterBodyScan(passenger) =>
+    	securityStation ! ScanReport(passenger, randomlyPassesTest)
     case ReturnBaggage => println(s"${self.path.name} has their baggage returned.") // TODO: Check if they received the right baggage?
     case LeaveSystem => println(s"${self.path.name} leaves the system.")
     case GoToDetention => println(s"${self.path.name} goes to detention.")
