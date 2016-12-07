@@ -1,14 +1,18 @@
 package actors
 
-import akka.actor.Actor
-import akka.actor.Props
-import akka.event.Logging
+import akka.actor.{Actor, ActorRef}
 
-class PassengerQueue extends Actor {
-  val log = Logging(context.system, this)
+import messages.{SendPassengerToQueue, BaggageScanReady}
+
+class PassengerQueue(baggageScan: ActorRef, bodyScan: ActorRef) extends Actor {
 
   def receive = {
-    case "test" => log.info("received test")
-    case _      => log.info("received unknown message")
+    case SendPassengerToQueue(passenger) =>
+      // Tell the Passenger they can place their Baggage
+      passenger ! BaggageScanReady(baggageScan)
+
+      // TODO: Wait for the Body Scan to be ready and then tell the Passenger they can enter
+
+    case _ => println(s"${self.path.name} Received Unknown Message")
   }
 }
