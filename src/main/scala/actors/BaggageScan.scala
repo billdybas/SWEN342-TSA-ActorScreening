@@ -12,7 +12,9 @@ class BaggageScan(val lineNumber: Int, val securityStation: ActorRef) extends Ac
 
   def receive = {
     case Startup => println(s"${self.path.name} starts up.")
-    case Shutdown => println(s"${self.path.name} shuts down.")
+    case Shutdown =>
+      println(s"${self.path.name} shuts down.")
+      securityStation forward Shutdown
     case PlaceBaggage(passenger, baggage) =>
       baggageQueue :+ baggage
       securityStation ! ScanReport(passenger, randomlyPassesTest)

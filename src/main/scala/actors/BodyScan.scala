@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorRef}
 
 import scala.util.Random
 
-import messages.{BodyScanStatus, BodyScanStatusRequest, EnterBodyScan, ScanReport, Startup, Shutdown, ShutdownSecurityStation}
+import messages.{BodyScanStatus, BodyScanStatusRequest, EnterBodyScan, ScanReport, Startup, Shutdown}
 
 class BodyScan(val lineNumber: Int, val securityStation: ActorRef) extends Actor {
   var isAvailable = true
@@ -13,7 +13,7 @@ class BodyScan(val lineNumber: Int, val securityStation: ActorRef) extends Actor
     case Startup => println(s"${self.path.name} starts up.")
     case Shutdown =>
       println(s"${self.path.name} shuts down.")
-      securityStation ! ShutdownSecurityStation
+      securityStation forward Shutdown
     case BodyScanStatusRequest => sender ! BodyScanStatus(isAvailable)
     case EnterBodyScan(passenger) =>
       isAvailable = false

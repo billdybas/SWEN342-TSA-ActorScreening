@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorRef}
 
 import scala.collection.mutable.HashMap
 
-import messages.{ScanReport, LeaveSystem, SendPassengerToJail, ShutdownSecurityStation, SecurityStationFinished}
+import messages.{ScanReport, LeaveSystem, SendPassengerToJail, Shutdown, SecurityStationFinished}
 
 class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
   val passengerScanReports: HashMap[ActorRef, Boolean] = HashMap[ActorRef, Boolean]()
@@ -26,7 +26,7 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
           passenger ! LeaveSystem
         }
       }
-    case ShutdownSecurityStation =>
+    case Shutdown =>
       // TODO: This will only check if two messages have been received.
       // This could be made better by checking the types of each sender,
       // making sure both have sent messages, so that for whatever reason
@@ -36,6 +36,7 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
       if (shutdownRequests == 2) {
         println(s"${self.path.name} shuts down.")
         jail ! SecurityStationFinished
+        sender ! SecurityStationFinished
       }
     case _ => println(s"${self.path.name} Received Unknown Message")
   }

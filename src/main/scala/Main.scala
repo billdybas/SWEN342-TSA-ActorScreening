@@ -1,24 +1,33 @@
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorSystem, Props, ActorRef}
+
+import scala.collection.mutable.Queue
+
 import actors._
-import messages.{Line, Startup, Shutdown}
+import messages.{Line, Startup, Shutdown, GetPassenger}
 
 object Main {
   def main(args: Array[String]): Unit = {
     val system = ActorSystem("TSA-Actor-Screening")
 
-    val numLines: Int = 2 // TODO: Command-line arg?
+    val NUM_LINES: Int = 2
+    val NUM_PASSENGERS: Int = 7
 
-    val documentCheck = system.actorOf(Props(new DocCheck(numLines)), name = "Document Check")
-    val jail = system.actorOf(Props(new Jail(numLines)), name = "Jail")
+    val scanners = Queue[ActorRef]()
 
-    for (i <- 1 to 10) {
-      val securityStation = system.actorOf(Props(new SecurityStation(i, jail)), name = s"Security Station ${i}")
+    val documentCheck = system.actorOf(Props(new DocCheck(NUM_LINES)), name = "Document-Check")
+    val jail = system.actorOf(Props(new Jail(NUM_LINES)), name = "Jail")
 
-      val baggageScan = system.actorOf(Props(new BaggageScan(i, securityStation)), name = s"Baggage Scan ${i}")
-      val bodyScan = system.actorOf(Props(new BodyScan(i, securityStation)), name = s"Body Scan ${i}")
+    for (i <- 1 to NUM_LINES) {
+      val securityStation = system.actorOf(Props(new SecurityStation(i, jail)), name = s"Security-Station-${i}")
 
-      val queue = system.actorOf(Props(new PassengerQueue(baggageScan, bodyScan)), name = s"Passenger ${i}")
+      val baggageScan = system.actorOf(Props(new BaggageScan(i, securityStation)), name = s"Baggage-Scan-${i}")
+      val bodyScan = system.actorOf(Props(new BodyScan(i, securityStation)), name = s"Body-Scan-${i}")
+
+      scanners :+ baggageScan
+      scanners :+ bodyScan
+
+      val queue = system.actorOf(Props(new PassengerQueue(baggageScan, bodyScan)), name = s"Queue-${i}")
 
       baggageScan ! Startup
       bodyScan ! Startup
@@ -26,13 +35,16 @@ object Main {
       documentCheck ! Line(i, queue, baggageScan, bodyScan, securityStation)
     }
 
-    // TODO: Let the document check start accepting passengers
-    //
-    // TODO: Keep a timer of the entire day; Randomly make Passengers and send them to the document check
-    //
-    // TODO: Send a shutdown message to everyone who needs one and when
-    // receive message back saying they're all done, shutdown the entire actor system
+    for (i <- 1 to NUM_PASSENGERS) {
+      val passenger = system.actorOf(Props(new Passenger(new Baggage())), name = s"Passenger-${i}")
 
-    system.terminate()
+      documentCheck ! GetPassenger(passenger)
+    }
+
+    scanners.foreach((s: ActorRef) => s ! Shutdown)
+
+    // TODO: Wait for all security stations to say they're shutdown
+
+    // system.terminate()
   }
 }

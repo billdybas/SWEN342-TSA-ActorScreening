@@ -34,6 +34,4 @@ case class SendPassengerToQueue(val passenger: ActorRef)
 
 case class Shutdown()
 
-case class ShutdownSecurityStation()
-
 case class Startup()
