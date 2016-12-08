@@ -2,7 +2,7 @@ package actors
 
 import akka.actor.{Actor, ActorRef}
 
-import messages.{PlaceBaggage, ReturnBaggage, LeaveSystem, GoToDetention, BaggageScanReady}
+import messages.{PlaceBaggage, ReturnBaggage, LeaveSystem, GoToDetention, BaggageScanReady, EnterBodyScan, ScanReport}
 
 class Baggage()
 
