@@ -10,17 +10,16 @@ class PassengerQueue(baggageScan: ActorRef, bodyScan: ActorRef) extends Actor {
 
   def receive = {
     case SendPassengerToQueue(passenger) =>
-      passengerQueue :+ passenger
+      passengerQueue += passenger
       // Tell the Passenger they can place their Baggage
       passenger ! BaggageScanReady(baggageScan)
-      bodyScan ! BodyScanStatusRequest()
-    case BodyScanStatus(isAvailable) => 
-      if (!isAvailable) {
-        bodyScan ! BodyScanStatusRequest()
+      bodyScan ! BodyScanStatusRequest
+    case BodyScanStatus(isAvailable) =>
+      if (isAvailable) {
+        bodyScan ! EnterBodyScan(passengerQueue.dequeue())
       } else {
-      	bodyScan ! EnterBodyScan(passengerQueue.dequeue())
+        bodyScan ! BodyScanStatusRequest
       }
-
     case _ => println(s"${self.path.name} Received Unknown Message")
   }
 }

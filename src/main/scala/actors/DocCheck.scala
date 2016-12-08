@@ -13,11 +13,12 @@ class DocCheck(numLines: Int) extends Actor {
 
   def receive = {
     case Line(id, queue, baggageScan, bodyScan, securityScan) =>
-      passengerQueues.put(id, queue)
+      passengerQueues(id) = queue
     case GetPassenger(passenger) =>
       if (randomlyPassesTest) {
         // Send the Passenger to a queue
-        passengerQueues.get(currentQueueNum).get ! SendPassengerToQueue(passenger)
+        passengerQueues(currentQueueNum) ! SendPassengerToQueue(passenger)
+
         // Assignment to a queue cycles through the available queues
         currentQueueNum = (currentQueueNum + 1) % numLines
       } else {
