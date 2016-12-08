@@ -10,8 +10,8 @@ object Main {
   def main(args: Array[String]): Unit = {
     val system = ActorSystem("TSA-Actor-Screening")
 
-    val NUM_LINES: Int = 5
-    val NUM_PASSENGERS: Int = 12
+    val NUM_LINES: Int = 3
+    val NUM_PASSENGERS: Int = 7
 
     val scanners = Queue[ActorRef]()
 
