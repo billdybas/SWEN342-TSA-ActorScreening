@@ -16,10 +16,14 @@ class PassengerQueue(baggageScan: ActorRef, bodyScan: ActorRef) extends Actor {
       bodyScan ! BodyScanStatusRequest
     case BodyScanStatus(isAvailable) =>
       if (isAvailable) {
-        bodyScan ! EnterBodyScan(passengerQueue.dequeue())
+        val passenger = passengerQueue.dequeue()
+
+        println(s"${self.path.name} tells ${passenger.path.name} to enter the ${bodyScan.path.name}.")
+        bodyScan ! EnterBodyScan(passenger)
       } else {
         bodyScan ! BodyScanStatusRequest
       }
-    case _ => println(s"${self.path.name} Received Unknown Message")
+    case _ =>
+      println(s"${self.path.name} Received Unknown Message")
   }
 }

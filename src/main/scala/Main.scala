@@ -10,8 +10,8 @@ object Main {
   def main(args: Array[String]): Unit = {
     val system = ActorSystem("TSA-Actor-Screening")
 
-    val NUM_LINES: Int = 1
-    val NUM_PASSENGERS: Int = 7
+    val NUM_LINES: Int = 5
+    val NUM_PASSENGERS: Int = 12
 
     val scanners = Queue[ActorRef]()
 
@@ -40,11 +40,15 @@ object Main {
 
       documentCheck ! GetPassenger(passenger)
     }
-Thread.sleep(5000)
+
+    // TODO: Instead of sleeping, send the shutdown message and
+    // and have the Queues finish processing their Passengers
+    Thread.sleep(5000)
     scanners.foreach((s: ActorRef) => s ! Shutdown)
 
-    // TODO: Wait for all security stations to say they're shutdown
+    // TODO: Wait for all Security Stations to say they've shutdown
+    Thread.sleep(5000)
 
-    // system.terminate()
+    system.terminate()
   }
 }

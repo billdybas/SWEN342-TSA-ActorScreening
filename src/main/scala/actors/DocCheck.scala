@@ -17,12 +17,16 @@ class DocCheck(numLines: Int) extends Actor {
     case GetPassenger(passenger) =>
       if (randomlyPassesTest) {
         // Send the Passenger to a queue
-        passengerQueues(currentQueueNum) ! SendPassengerToQueue(passenger)
+        val sendTo = passengerQueues(currentQueueNum)
+
+        println(s"${self.path.name} sends ${passenger.path.name} to ${sendTo.path.name}.")
+        sendTo ! SendPassengerToQueue(passenger)
 
         // Assignment to a queue cycles through the available queues
         currentQueueNum = (currentQueueNum + 1) % numLines
       } else {
         // Tell the Passenger to leave the system
+        println(s"${self.path.name} tells ${passenger.path.name} their documents failed.")
         passenger ! LeaveSystem
       }
     case _ => println(s"${self.path.name} Received Unknown Message")

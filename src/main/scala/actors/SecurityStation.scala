@@ -13,8 +13,10 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
   def receive = {
     case ScanReport(passenger, result) =>
       if (passengerScanReports.get(passenger) == None) {
+        println(s"${self.path.name} receives its first scan report for ${passenger.path.name}.")
         passengerScanReports.put(passenger, result)
       } else {
+        println(s"${self.path.name} receives its second scan report for ${passenger.path.name}.")
         passengerScanReports.put(passenger,
           passengerScanReports.get(passenger).get && result)
 
@@ -23,6 +25,7 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
           jail ! SendPassengerToJail(passenger)
         } else {
           // Passenger passed all scans - make them leave the system
+          println(s"${self.path.name} tells ${passenger.path.name} to leave.")
           passenger ! LeaveSystem
         }
       }
@@ -36,8 +39,9 @@ class SecurityStation(val lineNumber: Int, val jail: ActorRef) extends Actor {
       if (shutdownRequests == 2) {
         println(s"${self.path.name} shuts down.")
         jail ! SecurityStationFinished
-        sender ! SecurityStationFinished
+        // TODO: sender ! SecurityStationFinished // ?
       }
-    case _ => println(s"${self.path.name} Received Unknown Message")
+    case _ =>
+      println(s"${self.path.name} Received Unknown Message")
   }
 }
